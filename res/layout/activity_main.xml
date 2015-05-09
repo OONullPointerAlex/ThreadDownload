@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.MainActivity"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvFileName"
+        android:text="example"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp" />
+
+    <TextView
+        android:id="@+id/tvProgress"
+        android:text="0%"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_height="wrap_content"/>
+
+    <ProgressBar
+        android:id="@+id/pbProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/tvProgress"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pbProgress"
+        android:layout_below="@+id/pbProgress"
+        android:layout_marginTop="33dp"
+        android:text="停止" />
+
+    <Button
+        android:id="@+id/btStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btStop"
+        android:layout_alignBottom="@+id/btStop"
+        android:layout_alignRight="@+id/pbProgress"
+        android:text="下载" />
+
+</RelativeLayout>
