@@ -119,12 +119,8 @@ public class DownloadTask {
 					input.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}
-				
-			}
-
-			
-			
+				}				
+			}			
 		}
 
 	}
