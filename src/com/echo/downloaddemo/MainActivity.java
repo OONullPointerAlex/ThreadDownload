@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent(MainActivity.this, DownloadService.class);
 				intent.setAction(DownloadService.ACTION_STOP);
 				intent.putExtra("fileInfo", fileInfo);
-				startService(intent);		
+				startService(intent);	//第一次启动的时候启动	
 			}
 		});
         //注册广播接收器

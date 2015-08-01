@@ -11,8 +11,8 @@ public class FileInfo implements Serializable{
 	private int id;
 	private String url;
 	private String fileName;
-	private int length;
-	private int finished;
+	private int length; //文件长度
+	private int finished; //完成进度
 	public FileInfo() {
 		super();
 	}
@@ -58,6 +58,7 @@ public class FileInfo implements Serializable{
 		this.finished = finished;
 	}
 
+	//使用toString信息输出
 	@Override
 	public String toString() {
 		return "FileInfo [id=" + id + ", url=" + url + ", fileName=" + fileName

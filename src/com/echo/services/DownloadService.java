@@ -19,7 +19,9 @@ import android.text.InputFilter.LengthFilter;
 import android.util.Log;
 
 /*
- * DownloadService中接收从Activity传来的一些数据
+ * DownloadService中接收从Activity传来的一些数据（FileInfo由Activity传到Service进行接收）
+ * 之前必须必须先将FileInfo进行序列化
+ * 在xml中进行注册
  */
 public class DownloadService extends Service{
 	
@@ -32,11 +34,14 @@ public class DownloadService extends Service{
 	public static final int MSG_INIT = 0;
 	private DownloadTask mTask = null;
 	
-	//onStartCommand中获取一些数据值
+	//onStartCommand中获取一些数据值（接收代码）
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		//获取Activity传来的参数
+		//数据从intent中传递过来，从intent中获取数据
+		//判断intent传来的值
 		if(ACTION_START.equals(intent.getAction())){
 			FileInfo fileInfo = (FileInfo) intent.getSerializableExtra("fileInfo");
+			//测试数据有没有传递过来
 			Log.i("test","start" + fileInfo.toString());
 			//启动初始化线程
 			new InitThread(fileInfo).start();
@@ -58,7 +63,7 @@ public class DownloadService extends Service{
 	Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
-			case MSG_INIT:
+			case MSG_INIT:  //文件初始化
 				FileInfo fileInfo = (FileInfo) msg.obj;
 				Log.i("test", "Init:" + fileInfo);
 				//启动下载任务
@@ -75,25 +80,28 @@ public class DownloadService extends Service{
 	 * 初始化子线程
 	 */
 	class InitThread extends Thread{
+		//需要一些文件信息
 		private FileInfo mFileInfo = null;
 
 		public InitThread(FileInfo mFileInfo) {
 			super();
 			this.mFileInfo = mFileInfo;
 		}
+		
+		//run方法中实现网络请求
 		@Override
 		public void run() {
 			HttpURLConnection conn = null;
 			RandomAccessFile raf = null;
 			try {
-				//连接网络文件
+				//1 连接网络文件
 				URL url = new URL(mFileInfo.getUrl());
 				conn = (HttpURLConnection)url.openConnection();
 				conn.setConnectTimeout(3000);
-				conn.setRequestMethod("GET");
+				conn.setRequestMethod("GET");//从服务器下载文件，所以使用Get获取数据，除了下载操作以外，使用POST
 				int length = -1;
 				if(conn.getResponseCode() == HttpStatus.SC_OK){
-					//获取文件长度
+					//2 获取文件长度
 					length = conn.getContentLength();
 				}
 				if(length <= 0){
@@ -103,12 +111,13 @@ public class DownloadService extends Service{
 				if(!dir.exists()){
 					dir.mkdir();
 				}
-				//在本地创建文件
+				//3 在本地创建文件
 				File file = new File(dir, mFileInfo.getFileName());
-				raf = new RandomAccessFile(file, "rwd"); //可读 可写 可删除
-				//设置文件长度
+				raf = new RandomAccessFile(file, "rwd"); //可读 可写 可删除 RandomAccessFile可在任意位置写入
+				//4 设置文件长度
 				raf.setLength(length);	
 				mFileInfo.setLength(length);
+				//得到文件长度后发送回Service,线程和Service进行交互使用Handler
 				mHandler.obtainMessage(MSG_INIT, mFileInfo).sendToTarget();
 			} catch (Exception e) {
 				e.printStackTrace();

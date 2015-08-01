@@ -1,11 +1,14 @@
 package com.echo.entities;
 
+/*
+ * 线程信息
+ */
 public class ThreadInfo {
 	private  int id;
-	private String url;
+	private String url;//与文件url一直
 	private int start;
-	private int end;
-	private int finished;
+	private int end;//在哪里结束
+	private int finished;//完成进度
 	
 	public ThreadInfo() {
 		super();
