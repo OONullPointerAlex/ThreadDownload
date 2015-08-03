@@ -60,8 +60,8 @@ public class DownloadTask {
 		
 		@Override
 		public void run() {
-			//向数据库中插入信息
-			if(mDao.isExists(mThreadInfo.getUrl(), mThreadInfo.getId())){
+			//1 向数据库中插入信息
+			if(!mDao.isExists(mThreadInfo.getUrl(), mThreadInfo.getId())){
 				mDao.insertThread(mThreadInfo);
 			}
 			RandomAccessFile raf = null;
@@ -72,17 +72,17 @@ public class DownloadTask {
 				conn= (HttpURLConnection) url.openConnection();
 				conn.setConnectTimeout(3000);
 				conn.setRequestMethod("GET");
-				//设置下载位置
+				//2 设置下载位置（关键）
 				int start =  mThreadInfo.getStart() + mThreadInfo.getFinished();
 				conn.setRequestProperty("Range", "bytes=" + start + "-" + mThreadInfo.getEnd());
-				//设置文件的写入位置
+				//3 设置文件的写入位置
 				File file = new File(DownloadService.DOWNLOAD_PATH, mFileInfo.getFileName());
 				raf = new RandomAccessFile(file, "rwd");
 				raf.seek(start);
 				Intent intent = new Intent(DownloadService.ACTION_UPDATE);
 				mFinished += mThreadInfo.getFinished();
-				//开始下载
-				if(conn.getResponseCode() == HttpStatus.SC_PARTIAL_CONTENT){
+				//4 开始下载
+				if(conn.getResponseCode() == HttpStatus.SC_OK){
 					//读取数据
 					input = conn.getInputStream();
 					byte[] buffer = new byte[1024*4];
